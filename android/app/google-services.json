@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "845144208975",
+    "project_id": "budge-8",
+    "storage_bucket": "budge-8.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:845144208975:android:8f490f5b698e5db8019c3a",
+        "android_client_info": {
+          "package_name": "com.gabrielMahomed.budge8"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "845144208975-o1632peoseordbtit52603gdkpkinllm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBRhH-qx7yj6x0Ino4HLfnk8C1gf9-j05o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "845144208975-o1632peoseordbtit52603gdkpkinllm.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
