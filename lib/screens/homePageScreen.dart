@@ -45,11 +45,11 @@ class _HomePageState extends State<HomePageScreen> {
               }),
         ],
         title: Text('You have logged in'),
-        backgroundColor: Color(0xFFDA9FF9),
+        backgroundColor: Color(0xFF161d6f),
       ),
 
       bottomNavigationBar: BottomAppBar(
-        color: Color(0xFFDA9FF9),
+        color: Color(0xFF161d6f),
         child: Row(
           children: [
             IconButton(

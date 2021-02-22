@@ -13,6 +13,7 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final _auth = FirebaseAuth.instance;
+  final _formKey = GlobalKey<FormState>();
   String email;
   String password;
 
@@ -22,60 +23,124 @@ class _LoginScreenState extends State<LoginScreen> {
       backgroundColor: Colors.white,
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 24.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            Container(
-              height: 200.0,
-              child: Image.asset('images/logo.png'),
-            ),
-            SizedBox(
-              height: 48.0,
-            ),
-            TextField(
-              textAlign: TextAlign.center,
-              keyboardType: TextInputType.emailAddress,
-              onChanged: (value) {
-                email = value;
-              },
-              decoration: kTextFieldDecoration.copyWith(hintText: 'Enter your password'),
-            ),
-            SizedBox(
-              height: 8.0,
-            ),
-            TextField(
-              obscureText: true,
-              textAlign: TextAlign.center,
-              onChanged: (value) {
-                password = value;
-              },
-              decoration:  kTextFieldDecoration.copyWith(hintText: 'Enter your email'),
-            ),
-            SizedBox(
-              height: 24.0,
-            ),
-            appButton(
-              title: 'Login',
-              colour: new Color(0xFF161d6f),
-              onPressed: () async {
-                try{
-                  final user = await _auth.signInWithEmailAndPassword(email: email, password: password);
-
-                  if(user !=null)
-                  {
-                    Navigator.pushNamed(context, HomePageScreen.id);
+        child: Form(
+          key: _formKey,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              Container(
+                height: 200.0,
+                child: Image.asset('images/logo.png'),
+              ),
+              SizedBox(
+                height: 30.0,
+              ),
+              TextFormField(
+                validator: (value) {
+                  Pattern pattern = r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+";
+                  RegExp regex = new RegExp(pattern);
+                  if (value.isEmpty) {
+                    return 'Please enter an Email Address';
                   }
-                }
-                catch(e)
-                {
-                  print(e);
-                }
-              },
-            ),
-          ],
+
+                  if (!regex.hasMatch(value))
+                  {
+                    return 'Ensure the Email Address is valid';
+                  }
+
+                  return null;
+                },
+                textAlign: TextAlign.center,
+                keyboardType: TextInputType.emailAddress,
+                onChanged: (value) {
+                  email = value;
+                },
+                decoration: kTextFieldDecoration.copyWith(hintText: 'Enter your password'),
+              ),
+              SizedBox(
+                height: 8.0,
+              ),
+              TextFormField(
+                validator: (value) {
+                  if (value.isEmpty) {
+                    return 'Please enter an your Password';
+                  }
+
+                  return null;
+                },
+                obscureText: true,
+                textAlign: TextAlign.center,
+                onChanged: (value) {
+                  password = value;
+                },
+                decoration:  kTextFieldDecoration.copyWith(hintText: 'Enter your email'),
+              ),
+              SizedBox(
+                height: 8.0,
+              ),
+              appButton(
+                title: 'Login',
+                colour: new Color(0xFF161d6f),
+                onPressed: () async {
+                  if(_formKey.currentState.validate()) {
+                    try {
+                      final user = await _auth.signInWithEmailAndPassword(
+                          email: email, password: password);
+
+                      if (user != null) {
+                        this._formKey.currentState.reset();
+                        Navigator.pushNamed(context, HomePageScreen.id);
+                      }
+                    }
+                    catch (e) {
+
+                      print(e);
+                      if(e.toString().contains('user-not-found') || e.toString().contains('password is invalid'))
+                        {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) => _popUp(context),
+                          );
+                        }
+                    }
+                  }
+                },
+              ),
+            ],
+          ),
         ),
       ),
+    );
+  }
+
+  Widget _popUp(BuildContext context) {
+    return new AlertDialog(
+      title: const Text(
+        'Incorrect information',
+        textAlign: TextAlign.center,
+      ),
+      content: new Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(
+            "The username or password is incorrect",
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+      actions: <Widget>[
+        new FlatButton(
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+          textColor: Theme
+              .of(context)
+              .primaryColor,
+          child: const Text('Close'),
+        ),
+      ],
     );
   }
 }

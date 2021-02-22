@@ -1,9 +1,7 @@
 import 'package:budge8/screens/emailRegistrationScreen.dart';
 import 'package:budge8/screens/homePageScreen.dart';
 import 'package:flutter/material.dart';
-import 'package:budge8/const.dart';
 import 'package:budge8/components/appButton.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
 class RegistrationMethodScreen extends StatefulWidget {
   static String id = 'RegistrationMethodScreen';

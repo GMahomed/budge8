@@ -30,24 +30,23 @@ class _EmailRegistrationScreenState extends State<EmailRegistrationScreen> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
               Container(
-                height: 200.0,
+                height: 140.0,
                 child: Image.asset('images/logo.png'),
               ),
               SizedBox(
-                height: 48.0,
+                height: 20.0,
               ),
               TextFormField(
                 validator: (value) {
-                  Pattern pattern =
-                      r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+";
+                  Pattern pattern = r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+";
                   RegExp regex = new RegExp(pattern);
                   if (value.isEmpty) {
-                    return 'Please enter some text';
+                    return 'Please enter an Email Address';
                   }
 
-                  else if (!regex.hasMatch(value))
+                  if (!regex.hasMatch(value))
                   {
-                    return 'Enter Valid Email Address';
+                    return 'Ensure the Email Address is valid';
                   }
 
                   return null;
@@ -58,34 +57,68 @@ class _EmailRegistrationScreenState extends State<EmailRegistrationScreen> {
                 onChanged: (value) {
                   email = value;
                 },
-                decoration:kTextFieldDecoration.copyWith(hintText: 'Enter your email'),
+                decoration:kTextFieldDecoration.copyWith(hintText: 'Enter an Email Address'),
               ),
               SizedBox(
-                height: 8.0,
+                height: 5.0,
               ),
-              TextField(
+              TextFormField(
+                validator: (value) {
+                  Pattern pattern = r"^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$";
+                  RegExp regex = new RegExp(pattern);
+
+                  if (value.isEmpty) {
+                    return 'Please enter a Password';
+                  }
+
+                   if (value.length < 6) {
+                    return 'Password must be at least 6 characters long';
+                  }
+
+                   if (!regex.hasMatch(value))
+                   {
+                     return 'Password must have at least one letter, one number and one special character';
+                   }
+                  return null;
+                },
+
                 obscureText: true,
                 textAlign: TextAlign.center,
                 onChanged: (value) {
                   password = value;
                 },
-                decoration: kTextFieldDecoration.copyWith(hintText: 'Enter your password'),
+                decoration: kTextFieldDecoration.copyWith(hintText: 'Enter a Password'),
               ),
               SizedBox(
-                height: 24.0,
+                height: 5.0,
+              ),
+              TextFormField(
+                validator: (value) {
+
+                  if (value != password) {
+                    return 'Passwords should match';
+                  }
+                  return null;
+                },
+
+                obscureText: true,
+                textAlign: TextAlign.center,
+                decoration: kTextFieldDecoration.copyWith(hintText: 'Confirm Password'),
+              ),
+              SizedBox(
+                height: 5.0,
               ),
               appButton(
                 title: 'Register',
                 colour: new Color(0xFF161d6f),
                 onPressed: () async {
-                  // print(email);
-                  // print(password);
                   if(_formKey.currentState.validate())
                     {
                       try{
                         final newUser = await _auth.createUserWithEmailAndPassword(email: email, password: password);
                         if(newUser != null)
                         {
+                          this._formKey.currentState.reset();
                           Navigator.pushNamed(context, HomePageScreen.id);
                         }
                       }

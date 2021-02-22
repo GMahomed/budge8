@@ -1,4 +1,3 @@
-import 'package:budge8/screens/emailRegistrationScreen.dart';
 import 'package:budge8/screens/registrationMethodScreen.dart';
 import 'package:flutter/material.dart';
 import 'loginScreen.dart';
@@ -30,7 +29,6 @@ class _StartUpScreenState extends State<StartUpScreen> with SingleTickerProvider
                   'Budge',
                   style: TextStyle(
                       fontSize: 45.0,
-                      fontWeight: FontWeight.w900,
                       color: Colors.black
                   ),
                 ),
