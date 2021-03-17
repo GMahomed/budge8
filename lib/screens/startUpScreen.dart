@@ -1,4 +1,4 @@
-import 'package:budge8/screens/registrationMethodScreen.dart';
+import 'package:budge8/screens/emailRegistrationScreen.dart';
 import 'package:flutter/material.dart';
 import 'loginScreen.dart';
 import 'package:budge8/components/appButton.dart';
@@ -42,18 +42,18 @@ class _StartUpScreenState extends State<StartUpScreen> with SingleTickerProvider
             SizedBox(
               height: 48.0,
             ),
-            appButton(
-              title: 'Log-In',
+            AppButton(
+              title: 'Log In',
               colour: new Color(0xFF161d6f),
               onPressed: () {
                 Navigator.pushNamed(context, LoginScreen.id );
               },
             ),
-            appButton(
+            AppButton(
               title: 'Register',
               colour: new Color(0xFF002fff),
               onPressed: () {
-                Navigator.pushNamed(context, RegistrationMethodScreen.id );
+                Navigator.pushNamed(context, EmailRegistrationScreen.id );
               },
             ),
           ],

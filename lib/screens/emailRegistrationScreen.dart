@@ -1,8 +1,9 @@
-import 'package:budge8/screens/homePageScreen.dart';
+import 'package:budge8/screens/homePageScreenNoBudge.dart';
 import 'package:flutter/material.dart';
 import 'package:budge8/const.dart';
 import 'package:budge8/components/appButton.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class EmailRegistrationScreen extends StatefulWidget {
   static String id = 'emailRegistrationScreen';
@@ -12,6 +13,7 @@ class EmailRegistrationScreen extends StatefulWidget {
 }
 
 class _EmailRegistrationScreenState extends State<EmailRegistrationScreen> {
+  final _fireStore = FirebaseFirestore.instance;
   final _auth = FirebaseAuth.instance;
   final _formKey = GlobalKey<FormState>();
   String email;
@@ -108,7 +110,7 @@ class _EmailRegistrationScreenState extends State<EmailRegistrationScreen> {
               SizedBox(
                 height: 5.0,
               ),
-              appButton(
+              AppButton(
                 title: 'Register',
                 colour: new Color(0xFF161d6f),
                 onPressed: () async {
@@ -119,7 +121,11 @@ class _EmailRegistrationScreenState extends State<EmailRegistrationScreen> {
                         if(newUser != null)
                         {
                           this._formKey.currentState.reset();
-                          Navigator.pushNamed(context, HomePageScreen.id);
+                          await this._fireStore.collection("users").doc(email).set({
+                            'budgetSetup': false,
+                            'salary': 0,
+                          });
+                          Navigator.pushNamed(context, HomePageNoBudgeScreen.id);
                         }
                       }
                       catch(e)

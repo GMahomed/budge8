@@ -1,63 +1,29 @@
-import 'package:budge8/screens/createdBudgetScreen.dart';
-import 'package:budge8/screens/myGoalBeforeSetup.dart';
+import 'package:budge8/screens/homePageScreen.dart';
+import 'package:budge8/screens/myGoalSetupScreen.dart';
 import 'package:budge8/screens/startUpScreen.dart';
 import 'package:budge8/screens/transactionsScreen.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-import 'myGoalAfterSetup.dart';
+import 'createdBudgetScreen.dart';
 
-class HomePageScreen extends StatefulWidget {
-  static String id = 'homePageScreen';
+class MyGoalBeforeSetup extends StatefulWidget {
+  static String id = 'myGoalBeforeSetup';
 
   @override
-  _HomePageState createState() => _HomePageState();
+  _MyGoalBeforeSetupState createState() => _MyGoalBeforeSetupState();
 }
 
-class _HomePageState extends State<HomePageScreen> {
+class _MyGoalBeforeSetupState extends State<MyGoalBeforeSetup> {
   final _auth = FirebaseAuth.instance;
-  User loggedInUser;
-  final _fireStore = FirebaseFirestore.instance;
   bool mustLogout = false;
-  int total = 0;
-  int numOfCategories = 0;
-  String wasGoalSetup;
-  int salary = 0;
+  User loggedInUser;
 
   @override
   void initState() {
     super.initState();
 
     getCurrentUser();
-
-    this._fireStore.collection("users").doc(loggedInUser.email).collection("categories").get().then((doc) => {
-
-      this.setState(() {
-        numOfCategories = doc.docs.length;
-
-        for(int i = 0; i < doc.docs.length; i++)
-        {
-          total = total + doc.docs[i].data()['categoryLimit'];
-        }
-      })
-    });
-
-    this._fireStore.collection("users").doc(loggedInUser.email).collection('goal').doc('Financial Goal').get().then((doc) async => {
-      if(doc.exists){
-        wasGoalSetup = 'Yes',
-      }
-      else{
-        wasGoalSetup = 'No',
-      }
-    });
-
-    this._fireStore.collection("users").doc(loggedInUser.email).get().then((doc) => {
-
-      this.setState(() {
-        salary = doc.data()['salary'];
-      })
-    });
   }
 
   void getCurrentUser(){
@@ -88,7 +54,7 @@ class _HomePageState extends State<HomePageScreen> {
                 );
               },
             ),
-            title: Text('Budge8'),
+            title: Text('My Financial Goal'),
             backgroundColor: Color(0xFF161d6f),
           ),
 
@@ -110,7 +76,7 @@ class _HomePageState extends State<HomePageScreen> {
                 ListTile(
                   title: Text('Dashboard'),
                   onTap: () {
-                    Navigator.pop(context);
+                    Navigator.pushNamed(context, HomePageScreen.id);
                   },
                 ),
                 ListTile(
@@ -127,16 +93,8 @@ class _HomePageState extends State<HomePageScreen> {
                 ),
                 ListTile(
                   title: Text('My Financial Goal'),
-                  onTap: () async {
-
-                    await this._fireStore.collection("users").doc(loggedInUser.email).collection('goal').doc('Financial Goal').get().then((doc) async => {
-                      if(doc.exists){
-                        Navigator.pushNamed(context, MyGoalAfterSetup.id),
-                      }
-                      else{
-                        Navigator.pushNamed(context, MyGoalBeforeSetup.id),
-                      }
-                    });
+                  onTap: () {
+                    Navigator.pop(context);
                   },
                 ),
                 ListTile(
@@ -153,52 +111,41 @@ class _HomePageState extends State<HomePageScreen> {
               ],
             ),
           ),
-          body: Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'Number of budget categories: $numOfCategories',
-                    style: TextStyle(
-                      fontSize: 25,
+          body: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'You have not set a financial goal yet.',
+                  style: TextStyle(
+                    fontSize: 20,
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.symmetric(vertical: 16.0),
+                  child: Material(
+                    color: Color(0xFF002fff),
+                    borderRadius: BorderRadius.circular(15.0),
+                    elevation: 5.0,
+                    child: MaterialButton(
+                      onPressed: (){
+                        Navigator.pushNamed(context, MyGoalSetupScreen.id);
+                      },
+                      minWidth: 325.0,
+                      height: 42.0,
+                      child: Text(
+                        'Set a Goal',
+                        style: TextStyle(
+                            color: Colors.white
+                        ),
+                      ),
                     ),
                   ),
-                  SizedBox(
-                    height: 15,
-                  ),
-                  Text(
-                    'Total of all budget categories: R$total',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 25,
-                    ),
-                  ),
-                  SizedBox(
-                    height: 15,
-                  ),
-                  Text(
-                    'Has a financial goal been setup: $wasGoalSetup',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 25,
-                    ),
-                  ),
-                  SizedBox(
-                    height: 15,
-                  ),
-                  Text(
-                    'Remaining salary after budget was implemented: R${salary - total}',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 25,
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
+
         ),
       ),
     );

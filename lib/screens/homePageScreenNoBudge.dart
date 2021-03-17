@@ -1,63 +1,25 @@
-import 'package:budge8/screens/createdBudgetScreen.dart';
-import 'package:budge8/screens/myGoalBeforeSetup.dart';
+import 'package:budge8/screens/enterSalaryScreen.dart';
 import 'package:budge8/screens/startUpScreen.dart';
-import 'package:budge8/screens/transactionsScreen.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-import 'myGoalAfterSetup.dart';
-
-class HomePageScreen extends StatefulWidget {
-  static String id = 'homePageScreen';
+class HomePageNoBudgeScreen extends StatefulWidget {
+  static String id = 'homePageScreenNoBudge';
 
   @override
-  _HomePageState createState() => _HomePageState();
+  _HomePageNoBudgeState createState() => _HomePageNoBudgeState();
 }
 
-class _HomePageState extends State<HomePageScreen> {
+class _HomePageNoBudgeState extends State<HomePageNoBudgeScreen> {
   final _auth = FirebaseAuth.instance;
-  User loggedInUser;
-  final _fireStore = FirebaseFirestore.instance;
   bool mustLogout = false;
-  int total = 0;
-  int numOfCategories = 0;
-  String wasGoalSetup;
-  int salary = 0;
+  User loggedInUser;
 
   @override
   void initState() {
     super.initState();
 
     getCurrentUser();
-
-    this._fireStore.collection("users").doc(loggedInUser.email).collection("categories").get().then((doc) => {
-
-      this.setState(() {
-        numOfCategories = doc.docs.length;
-
-        for(int i = 0; i < doc.docs.length; i++)
-        {
-          total = total + doc.docs[i].data()['categoryLimit'];
-        }
-      })
-    });
-
-    this._fireStore.collection("users").doc(loggedInUser.email).collection('goal').doc('Financial Goal').get().then((doc) async => {
-      if(doc.exists){
-        wasGoalSetup = 'Yes',
-      }
-      else{
-        wasGoalSetup = 'No',
-      }
-    });
-
-    this._fireStore.collection("users").doc(loggedInUser.email).get().then((doc) => {
-
-      this.setState(() {
-        salary = doc.data()['salary'];
-      })
-    });
   }
 
   void getCurrentUser(){
@@ -108,36 +70,24 @@ class _HomePageState extends State<HomePageScreen> {
                   ),
                 ),
                 ListTile(
+                  enabled: false,
                   title: Text('Dashboard'),
-                  onTap: () {
-                    Navigator.pop(context);
-                  },
                 ),
                 ListTile(
+                  enabled: false,
                   title: Text('My Budget Categories'),
-                  onTap: () {
-                    Navigator.pushNamed(context, CreatedBudgetScreen.id);
-                  },
                 ),
                 ListTile(
+                  enabled: false,
                   title: Text('Transact'),
-                  onTap: () {
-                    Navigator.pushNamed(context, TransactionScreen.id);
-                  },
                 ),
                 ListTile(
+                  enabled: false,
+                  title: Text('Transact'),
+                ),
+                ListTile(
+                  enabled: false,
                   title: Text('My Financial Goal'),
-                  onTap: () async {
-
-                    await this._fireStore.collection("users").doc(loggedInUser.email).collection('goal').doc('Financial Goal').get().then((doc) async => {
-                      if(doc.exists){
-                        Navigator.pushNamed(context, MyGoalAfterSetup.id),
-                      }
-                      else{
-                        Navigator.pushNamed(context, MyGoalBeforeSetup.id),
-                      }
-                    });
-                  },
                 ),
                 ListTile(
                   title: Text('Logout'),
@@ -153,52 +103,41 @@ class _HomePageState extends State<HomePageScreen> {
               ],
             ),
           ),
-          body: Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Center(
+          body: Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    'Number of budget categories: $numOfCategories',
+                    'You have not created a budget yet.',
                     style: TextStyle(
-                      fontSize: 25,
+                      fontSize: 20,
                     ),
                   ),
-                  SizedBox(
-                    height: 15,
-                  ),
-                  Text(
-                    'Total of all budget categories: R$total',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 25,
-                    ),
-                  ),
-                  SizedBox(
-                    height: 15,
-                  ),
-                  Text(
-                    'Has a financial goal been setup: $wasGoalSetup',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 25,
-                    ),
-                  ),
-                  SizedBox(
-                    height: 15,
-                  ),
-                  Text(
-                    'Remaining salary after budget was implemented: R${salary - total}',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 25,
+                  Padding(
+                    padding: EdgeInsets.symmetric(vertical: 16.0),
+                    child: Material(
+                      color: Color(0xFF002fff),
+                      borderRadius: BorderRadius.circular(15.0),
+                      elevation: 5.0,
+                      child: MaterialButton(
+                        onPressed: (){
+                          Navigator.pushNamed(context, EnterSalaryScreen.id);
+                        },
+                        minWidth: 310.0,
+                        height: 42.0,
+                        child: Text(
+                          'Create a budget',
+                          style: TextStyle(
+                              color: Colors.white
+                          ),
+                        ),
+                      ),
                     ),
                   ),
                 ],
               ),
-            ),
           ),
+
         ),
       ),
     );

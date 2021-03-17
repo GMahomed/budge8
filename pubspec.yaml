@@ -12,11 +12,12 @@ dependencies:
   flutter:
     sdk: flutter
 
-
   cupertino_icons: ^1.0.0
   firebase_core: ^0.7.0
   firebase_auth: ^0.20.0+1
   flutter_webview_plugin: ^0.3.10+1
+  cloud_firestore: ^0.16.0+1
+  shared_preferences: ^0.5.12+4
 
 dev_dependencies:
   flutter_test:

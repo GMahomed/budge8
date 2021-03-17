@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-class appButton extends StatelessWidget {
+class AppButton extends StatelessWidget {
   final Color colour;
   final String title;
   final Function onPressed;
 
-  appButton ({this.colour, this.title, @required this.onPressed});
+  AppButton ({this.colour, this.title, @required this.onPressed});
 
   @override
   Widget build(BuildContext context) {
@@ -20,6 +20,7 @@ class appButton extends StatelessWidget {
           height: 42.0,
           child: Text(
             title,
+            textAlign: TextAlign.center,
             style: TextStyle(
                 color: Colors.white
             ),

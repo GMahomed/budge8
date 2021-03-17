@@ -1,5 +1,7 @@
 import 'package:budge8/const.dart';
+import 'package:budge8/screens/homePageScreenNoBudge.dart';
 import 'package:budge8/screens/homePageScreen.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:budge8/components/appButton.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -13,6 +15,7 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final _auth = FirebaseAuth.instance;
+  final _fireStore = FirebaseFirestore.instance;
   final _formKey = GlobalKey<FormState>();
   String email;
   String password;
@@ -56,7 +59,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 onChanged: (value) {
                   email = value;
                 },
-                decoration: kTextFieldDecoration.copyWith(hintText: 'Enter your password'),
+                decoration: kTextFieldDecoration.copyWith(hintText: 'Enter your email'),
               ),
               SizedBox(
                 height: 8.0,
@@ -74,13 +77,13 @@ class _LoginScreenState extends State<LoginScreen> {
                 onChanged: (value) {
                   password = value;
                 },
-                decoration:  kTextFieldDecoration.copyWith(hintText: 'Enter your email'),
+                decoration:  kTextFieldDecoration.copyWith(hintText: 'Enter your password'),
               ),
               SizedBox(
                 height: 8.0,
               ),
-              appButton(
-                title: 'Login',
+              AppButton(
+                title: 'Log In',
                 colour: new Color(0xFF161d6f),
                 onPressed: () async {
                   if(_formKey.currentState.validate()) {
@@ -90,7 +93,18 @@ class _LoginScreenState extends State<LoginScreen> {
 
                       if (user != null) {
                         this._formKey.currentState.reset();
-                        Navigator.pushNamed(context, HomePageScreen.id);
+
+                        await this._fireStore.collection("users").doc(user.user.email).get().then((doc) => {
+                          if(doc.exists){
+                            if(!doc.data().values.first){
+                              Navigator.pushNamedAndRemoveUntil(context, HomePageNoBudgeScreen.id, (route) => false)
+                            } else {
+                              Navigator.pushNamedAndRemoveUntil(context, HomePageScreen.id, (route) => false)
+                            }
+                          }
+                        });
+
+
                       }
                     }
                     catch (e) {
@@ -133,6 +147,7 @@ class _LoginScreenState extends State<LoginScreen> {
       actions: <Widget>[
         new FlatButton(
           onPressed: () {
+
             Navigator.of(context).pop();
           },
           textColor: Theme
